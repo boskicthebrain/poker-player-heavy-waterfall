@@ -11,68 +11,78 @@ namespace Nancy.Simple
 
         public static int BetRequest(JObject gameState)
         {
-            var betterGameState = gameState.ToObject<GameState>();
-            var handAnalyzer = new HandAnalyzer();
-            var ourPlayer = betterGameState.players.First(p => p.name == "Heavy Waterfall");
-
-            var cardValue = handAnalyzer.Analyze(betterGameState.community_cards, ourPlayer.hole_cards);
-
-
-            if (betterGameState.community_cards.Count == 0)
+            try
             {
-                if (cardValue >= 1)
+                var betterGameState = gameState.ToObject<GameState>();
+                var handAnalyzer = new HandAnalyzer();
+                var ourPlayer = betterGameState.players.First(p => p.name == "Heavy Waterfall");
+
+                var cardValue = handAnalyzer.Analyze(betterGameState.community_cards, ourPlayer.hole_cards);
+
+
+                if (betterGameState.community_cards.Count == 0)
                 {
-                    return RaiseMinimum(betterGameState, ourPlayer);
+                    if (cardValue >= 1)
+                    {
+                        return RaiseMinimum(betterGameState, ourPlayer);
+                    }
+
+                    if (cardValue > 0.73f // At least Jack
+                        && betterGameState.current_buy_in <= betterGameState.small_blind * 2)
+                    {
+                        return RaiseMinimum(betterGameState, ourPlayer);
+                    }
+
+                    return Fold();
                 }
 
-                if (cardValue > 0.73f // At least Jack
-                    && betterGameState.current_buy_in <= betterGameState.small_blind * 2) 
+                if (betterGameState.community_cards.Count >= 3)
                 {
-                    return RaiseMinimum(betterGameState, ourPlayer);
+                    var relativeHandValue =
+                        cardValue - handAnalyzer.Analyze(betterGameState.community_cards, new List<Card>());
+                    if (cardValue >= 4)
+                    {
+                        return Raise(betterGameState, ourPlayer, RaiseStep.AllIn);
+                    }
+
+                    if (cardValue >= 3)
+                    {
+                        if (betterGameState.bet_index > 1)
+                        {
+                            return Call(betterGameState, ourPlayer);
+                        }
+
+                        return Raise(betterGameState, ourPlayer, RaiseStep.HalfStack);
+                    }
+
+                    if (cardValue >= 2)
+                    {
+                        if (betterGameState.bet_index > 1)
+                        {
+                            return Call(betterGameState, ourPlayer);
+                        }
+
+                        return Raise(betterGameState, ourPlayer, RaiseStep.ThirdStack);
+                    }
+
+                    if (cardValue >= 1)
+                    {
+                        if (!IsBetTooHigh(betterGameState, ourPlayer))
+                        {
+                            return Call(betterGameState, ourPlayer);
+                        }
+                    }
+
+                    return Fold();
                 }
 
                 return Fold();
             }
-
-            if (betterGameState.community_cards.Count >= 3)
+            catch (Exception e)
             {
-                var communityValueDifference =
-                    cardValue - handAnalyzer.Analyze(betterGameState.community_cards, new List<Card>());
-                if (cardValue >= 4)
-                {
-                    return Raise(betterGameState, ourPlayer, RaiseStep.AllIn);
-                }
-                
-                if (cardValue >= 3)
-                {
-                    if (betterGameState.bet_index > 1)
-                    {
-                        return Call(betterGameState, ourPlayer);
-                    }
-                    return Raise(betterGameState, ourPlayer, RaiseStep.HalfStack);
-                }
-
-                if (cardValue >= 2)
-                {
-                    if (betterGameState.bet_index > 1)
-                    {
-                        return Call(betterGameState, ourPlayer);
-                    }
-                    return Raise(betterGameState, ourPlayer, RaiseStep.ThirdStack);
-                }
-
-                if (cardValue >= 1)
-                {
-                    if (!IsBetTooHigh(betterGameState, ourPlayer))
-                    {
-                        return Call(betterGameState, ourPlayer);
-                    }
-                }
-
-                return Fold();
+                Console.WriteLine(e.ToString());
+                return 0;
             }
-
-            return Fold();
         }
 
         private static bool IsBetTooHigh(GameState betterGameState, Player ourPlayer)
