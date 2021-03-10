@@ -5,21 +5,18 @@ namespace Nancy.Simple
 {
     public static class PokerPlayer
     {
-        public static readonly string VERSION = "Super secret tactic which is totally not all in.";
+        public static readonly string VERSION = "We smart now.";
 
 		public static int BetRequest(JObject gameState)
 		{
 			var betterGameState = gameState.ToObject<GameState>();
-			var player = gameState["players"]
-				.First(x => x["name"].Value<string>() == "Heavy Waterfall");
-			var cards = player["hole_cards"];
-			if (cards[0]["rank"] == cards[1]["rank"]){
-				var stack = player["stack"]
-					.Value<int>();
-				return stack;
+			
+			if (betterGameState.round < 2)
+			{
+				return 0;
 			}
 
-			return 0;
+			return betterGameState.players.First(p => p.name == "Heavy Waterfall").stack;
 		}
 		
 		public static void ShowDown(JObject gameState)
