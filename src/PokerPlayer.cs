@@ -22,9 +22,20 @@ namespace Nancy.Simple
 
                 if (betterGameState.community_cards.Count == 0)
                 {
+                    var preflopStrategy = new PreflopStrategyAnalyzer();
+                    var preflopRank = preflopStrategy.Analyze(ourPlayer.hole_cards);
+                    
                     if (cardValue >= 1)
                     {
-                        return RaiseMinimum(betterGameState, ourPlayer);
+                        if (preflopRank < 5)
+                        {
+                            return RaiseMinimum(betterGameState, ourPlayer);
+                        }
+
+                        if (!IsBetTooHigh(betterGameState, ourPlayer))
+                        {
+                            return Call(betterGameState, ourPlayer);
+                        }
                     }
 
                     if (cardValue > 0.73f // At least Jack
