@@ -40,12 +40,12 @@ namespace Nancy.Simple
                 {
                     var relativeHandValue =
                         cardValue - handAnalyzer.Analyze(betterGameState.community_cards, new List<Card>());
-                    if (cardValue >= 4)
+                    if (relativeHandValue >= 4)
                     {
                         return Raise(betterGameState, ourPlayer, RaiseStep.AllIn);
                     }
 
-                    if (cardValue >= 3)
+                    if (relativeHandValue >= 3)
                     {
                         if (betterGameState.bet_index > 1)
                         {
@@ -55,7 +55,7 @@ namespace Nancy.Simple
                         return Raise(betterGameState, ourPlayer, RaiseStep.HalfStack);
                     }
 
-                    if (cardValue >= 2)
+                    if (relativeHandValue >= 2)
                     {
                         if (betterGameState.bet_index > 1)
                         {
@@ -65,7 +65,7 @@ namespace Nancy.Simple
                         return Raise(betterGameState, ourPlayer, RaiseStep.ThirdStack);
                     }
 
-                    if (cardValue >= 1)
+                    if (relativeHandValue >= 1)
                     {
                         if (!IsBetTooHigh(betterGameState, ourPlayer))
                         {
