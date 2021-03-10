@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using System.Linq;
+using Newtonsoft.Json.Linq;
 
 namespace Nancy.Simple
 {
@@ -8,8 +9,10 @@ namespace Nancy.Simple
 
 		public static int BetRequest(JObject gameState)
 		{
-			//TODO: Use this method to return the value You want to bet
-			return 101;
+			var stack = gameState["players"]
+				.First(x => x["name"].Value<string>() == "Heavy Waterfall")["stack"]
+				.Value<int>();
+			return stack;
 		}
 
 		public static void ShowDown(JObject gameState)
