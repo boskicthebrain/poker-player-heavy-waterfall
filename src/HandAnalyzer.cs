@@ -5,7 +5,7 @@ namespace Nancy.Simple
 {
     public class HandAnalyzer
     {
-        public int Analyze(List<Card> communityCards, List<Card> holeCards)
+        public float Analyze(List<Card> communityCards, List<Card> holeCards)
         {
             var allCards = communityCards.Union(holeCards).ToList();
             var groups = allCards.GroupBy(c => c.rank).ToList();
@@ -52,7 +52,7 @@ namespace Nancy.Simple
             }
 
             var highest = allCards.OrderBy(c => c.rank).Last();
-            return 0;
+            return RankToInt(highest.rank) / 15f;
         }
 
         private bool IsStraight(List<Card> cards)
