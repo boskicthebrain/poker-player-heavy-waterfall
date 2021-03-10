@@ -57,7 +57,7 @@ namespace Nancy.Simple
             }
 
             var highest = allCards.OrderBy(c => c.rank).Last();
-            return RankToInt(highest.rank) / 15f;
+            return RankToInt(highest.rank, aceValue: 14) / 15f;
         }
 
         private static bool IsFlush(List<Card> allCards)
