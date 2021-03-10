@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Nancy.Simple
@@ -13,6 +14,11 @@ namespace Nancy.Simple
             var hasTriple = groups.Any(g => g.Count() == 3);
             var numPairs = groups.Count(g => g.Count() == 2);
 
+            if (IsStraight(allCards) && IsFlush(allCards))
+            {
+                return 8;
+            }
+
             if (groups.Any(g => g.Count() >= 4))
             {
                 return 7;
@@ -24,8 +30,7 @@ namespace Nancy.Simple
                 return 6;
             }
 
-            var hasFlush = allCards.GroupBy(c => c.suit).Any(g => g.Count() >= 5);
-            if (hasFlush)
+            if (IsFlush(allCards))
             {
                 return 5;
             }
@@ -55,35 +60,46 @@ namespace Nancy.Simple
             return RankToInt(highest.rank) / 15f;
         }
 
-        private bool IsStraight(List<Card> cards)
+        private static bool IsFlush(List<Card> allCards)
         {
-            var orderedIntRanks = cards.Select(c => RankToInt(c.rank)).OrderBy(i => i).ToList();
+            return allCards.GroupBy(c => c.suit).Any(g => g.Count() >= 5);
+        }
+
+        public bool IsStraight(List<Card> cards)
+        {
+            return IsStraight(cards, s => RankToInt(s, aceValue: 1)) ||
+                   IsStraight(cards, s => RankToInt(s, aceValue: 14));
+        }
+
+        private bool IsStraight(List<Card> cards, Func<string, int> rankToInt)
+        {
+            var orderedIntRanks = cards.Select(c => rankToInt(c.rank)).Distinct().OrderBy(i => i).ToList();
             for (var startPos = 0; startPos < cards.Count - 4; startPos++)
             {
                 var currentValue = orderedIntRanks[startPos];
                 var straightCount = 1;
-                for (var i = 1; i < 5; i++)
+                if (orderedIntRanks.Count - startPos >= 5)
                 {
-                    if (orderedIntRanks[startPos + i] == currentValue + 1)
+                    for (var i = 1; i < 5; i++)
                     {
-                        currentValue += 1;
-                        straightCount += 1;
-                        continue;
+                        if (orderedIntRanks[startPos + i] == currentValue + 1)
+                        {
+                            currentValue += 1;
+                            straightCount += 1;
+                        }
+                        
+                        if (straightCount >= 5)
+                        {
+                            return true;
+                        }
                     }
-
-                    if (straightCount >= 5)
-                    {
-                        return true;
-                    }
-
-                    break;
                 }
             }
 
             return false;
         }
-
-        private int RankToInt(string rank)
+        
+        private int RankToInt(string rank, int aceValue)
         {
             int intRank;
             if (int.TryParse(rank, out intRank))
@@ -96,7 +112,7 @@ namespace Nancy.Simple
                 case "J": return 11;
                 case "Q": return 12;
                 case "K": return 13;
-                case "A": return 14;
+                case "A": return aceValue;
             }
 
             return 0;
