@@ -15,5 +15,6 @@ namespace Nancy.Simple
         public List<Card> community_cards { get; set; }
         public int current_buy_in { get; set; }
         public int pot { get; set; }
+        public int minimum_raise { get; set; }
     }
 }

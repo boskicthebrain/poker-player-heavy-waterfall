@@ -23,10 +23,21 @@ namespace Nancy.Simple
                 return Fold();
             }
 
+            if (betterGameState.community_cards.Count == 0)
+            {
+                if (cardValue > 0 && !IsBetTooHigh(betterGameState,ourPlayer))
+                {
+                    return Raise(betterGameState, ourPlayer);
+                }
+            }
             if (betterGameState.community_cards.Count < 3 
-                && betterGameState.current_buy_in <= (ourPlayer.stack / 2))
+                && !IsBetTooHigh(betterGameState, ourPlayer))
             {
                 return Call(betterGameState, ourPlayer);
+            }
+            if (betterGameState.community_cards.Count >= 3)
+            {
+                
             }
             
             if (cardValue >= 2)
@@ -35,6 +46,16 @@ namespace Nancy.Simple
             }
 
             return Fold();
+        }
+
+        private static bool IsBetTooHigh(GameState betterGameState, Player ourPlayer)
+        {
+            return betterGameState.current_buy_in - ourPlayer.bet > (ourPlayer.stack / 2);
+        }
+
+        private static int Raise(GameState betterGameState, Player ourPlayer)
+        {
+            return betterGameState.current_buy_in - ourPlayer.bet + betterGameState.minimum_raise;
         }
 
         private static int Fold()
