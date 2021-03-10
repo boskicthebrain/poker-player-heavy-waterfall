@@ -21,13 +21,13 @@ namespace Nancy.Simple
             {
                 if (cardValue > 0)
                 {
-                    return Raise(betterGameState, ourPlayer);
+                    return MinimumRaise(betterGameState, ourPlayer);
                 }
 
                 if (cardValue > 0.73f // At least Jack
                     && betterGameState.current_buy_in <= betterGameState.small_blind * 2) 
                 {
-                    return Call(betterGameState, ourPlayer);
+                    return MinimumRaise(betterGameState, ourPlayer);
                 }
 
                 return Fold();
@@ -42,7 +42,7 @@ namespace Nancy.Simple
 
                 if (cardValue >= 2)
                 {
-                    return Raise(betterGameState, ourPlayer);
+                    return MinimumRaise(betterGameState, ourPlayer);
                 }
 
                 if (cardValue == 1)
@@ -64,7 +64,7 @@ namespace Nancy.Simple
             return betterGameState.current_buy_in - ourPlayer.bet > (ourPlayer.stack / 2);
         }
 
-        private static int Raise(GameState betterGameState, Player ourPlayer)
+        private static int MinimumRaise(GameState betterGameState, Player ourPlayer)
         {
             return betterGameState.current_buy_in - ourPlayer.bet + betterGameState.minimum_raise;
         }
