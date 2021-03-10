@@ -16,33 +16,30 @@ namespace Nancy.Simple
 
             var cardValue = handAnalyzer.Analyze(betterGameState.community_cards, ourPlayer.hole_cards);
 
-            
-            // Skip over first two rounds because we would call other players who always go all in
-            if (betterGameState.round < 2)
-            {
-                return Fold();
-            }
 
             if (betterGameState.community_cards.Count == 0)
             {
-                if (cardValue > 0 && !IsBetTooHigh(betterGameState,ourPlayer))
+                if (cardValue > 0)
                 {
                     return Raise(betterGameState, ourPlayer);
                 }
+
+                return Fold();
             }
-            if (betterGameState.community_cards.Count < 3 
-                && !IsBetTooHigh(betterGameState, ourPlayer))
-            {
-                return Call(betterGameState, ourPlayer);
-            }
+
             if (betterGameState.community_cards.Count >= 3)
             {
-                
-            }
-            
-            if (cardValue >= 2)
-            {
-                return ourPlayer.stack;
+                if (cardValue >= 3)
+                {
+                    return ourPlayer.stack;
+                }
+
+                if (cardValue >= 2)
+                {
+                    return Raise(betterGameState, ourPlayer);
+                }
+
+                return Fold();
             }
 
             return Fold();
