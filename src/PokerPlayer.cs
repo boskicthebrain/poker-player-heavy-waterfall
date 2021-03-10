@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json.Linq;
 
@@ -35,6 +36,8 @@ namespace Nancy.Simple
 
             if (betterGameState.community_cards.Count >= 3)
             {
+                var communityValueDifference =
+                    cardValue - handAnalyzer.Analyze(betterGameState.community_cards, new List<Card>());
                 if (cardValue >= 4)
                 {
                     return Raise(betterGameState, ourPlayer, RaiseStep.AllIn);
@@ -42,11 +45,19 @@ namespace Nancy.Simple
                 
                 if (cardValue >= 3)
                 {
+                    if (betterGameState.bet_index > 1)
+                    {
+                        return Call(betterGameState, ourPlayer);
+                    }
                     return Raise(betterGameState, ourPlayer, RaiseStep.HalfStack);
                 }
 
                 if (cardValue >= 2)
                 {
+                    if (betterGameState.bet_index > 1)
+                    {
+                        return Call(betterGameState, ourPlayer);
+                    }
                     return Raise(betterGameState, ourPlayer, RaiseStep.ThirdStack);
                 }
 
