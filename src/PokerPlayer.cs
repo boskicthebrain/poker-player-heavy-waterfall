@@ -31,7 +31,10 @@ namespace Nancy.Simple
                     {
                         if (preflopRank < 5)
                         {
-                            return RaiseMinimum(betterGameState, ourPlayer);
+                            if (!IsBetTooHigh(betterGameState, ourPlayer))
+                            {
+                                return RaiseMinimum(betterGameState, ourPlayer);    
+                            }
                         }
 
                         if (!IsBetTooHigh(betterGameState, ourPlayer))
