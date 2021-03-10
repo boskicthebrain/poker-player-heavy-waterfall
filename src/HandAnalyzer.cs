@@ -85,7 +85,8 @@ namespace Nancy.Simple
 
         private int RankToInt(string rank)
         {
-            if (int.TryParse(rank, out var intRank))
+            int intRank;
+            if (int.TryParse(rank, out intRank))
             {
                 return intRank;
             }
