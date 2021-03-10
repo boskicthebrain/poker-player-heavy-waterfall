@@ -21,12 +21,12 @@ namespace Nancy.Simple
 				return maxBet;
 			}
 			
-			if (betterGameState.round < 2 )
+			if (betterGameState.round >= 2 )
 			{
-				return 0;
+				return maxBet/2;
 			}
 
-			return maxBet/2;
+			return 0;
 		}
 		
 		public static void ShowDown(JObject gameState)
