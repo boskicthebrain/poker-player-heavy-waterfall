@@ -25,7 +25,7 @@ namespace Nancy.Simple
                 {
                     var preflopStrategy = new PreflopStrategyAnalyzer();
                     var preflopRank = preflopStrategy.Analyze(ourPlayer.hole_cards);
-                    
+
                     if (cardValue >= 1)
                     {
                         if (preflopRank < 5)
@@ -42,7 +42,10 @@ namespace Nancy.Simple
                     if (cardValue > 0.73f // At least Jack
                         && betterGameState.current_buy_in <= betterGameState.small_blind * 2)
                     {
-                        return RaiseMinimum(betterGameState, ourPlayer);
+                        if (!IsBetTooHigh(betterGameState, ourPlayer))
+                        {
+                            return RaiseMinimum(betterGameState, ourPlayer);
+                        }
                     }
 
                     return Fold();
@@ -101,8 +104,14 @@ namespace Nancy.Simple
         {
             return betterGameState.current_buy_in - ourPlayer.bet > (ourPlayer.stack / 4);
         }
-        
-        private enum RaiseStep { Minimum, ThirdStack, HalfStack, AllIn}
+
+        private enum RaiseStep
+        {
+            Minimum,
+            ThirdStack,
+            HalfStack,
+            AllIn
+        }
 
         private static int Raise(GameState state, Player we, RaiseStep step)
         {
@@ -113,7 +122,7 @@ namespace Nancy.Simple
                 case RaiseStep.HalfStack: return we.stack / 2;
                 case RaiseStep.AllIn: return we.stack;
             }
-            
+
             return RaiseMinimum(state, we);
         }
 
