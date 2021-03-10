@@ -109,6 +109,7 @@ namespace Nancy.Simple
 
             switch (rank)
             {
+                case "T": return 10;
                 case "J": return 11;
                 case "Q": return 12;
                 case "K": return 13;
