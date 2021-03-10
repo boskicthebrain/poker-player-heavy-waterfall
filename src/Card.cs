@@ -2,7 +2,7 @@
 {
     public class Card
     {
-        public int rank { get; set; }
+        public string rank { get; set; }
         public string suit { get; set; }
     }
 }
