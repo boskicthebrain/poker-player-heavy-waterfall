@@ -21,6 +21,7 @@ namespace Nancy.Simple
 
 
                 Console.WriteLine("Community cards count: " + betterGameState.community_cards.Count);
+                Console.WriteLine("Minimum Raise: " + betterGameState.minimum_raise);
                 if (betterGameState.community_cards.Count < 3)
                 {
                     var preflopStrategy = new PreflopStrategyAnalyzer();
