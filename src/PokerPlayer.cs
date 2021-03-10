@@ -19,7 +19,7 @@ namespace Nancy.Simple
 
             if (betterGameState.community_cards.Count == 0)
             {
-                if (cardValue > 0)
+                if (cardValue >= 1)
                 {
                     return MinimumRaise(betterGameState, ourPlayer);
                 }
@@ -45,7 +45,7 @@ namespace Nancy.Simple
                     return MinimumRaise(betterGameState, ourPlayer);
                 }
 
-                if (cardValue == 1)
+                if (cardValue >= 1)
                 {
                     if (!IsBetTooHigh(betterGameState, ourPlayer))
                     {
