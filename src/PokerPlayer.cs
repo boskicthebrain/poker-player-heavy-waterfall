@@ -22,8 +22,9 @@ namespace Nancy.Simple
             {
                 return Fold();
             }
-            
-            if (betterGameState.community_cards.Count < 3)
+
+            if (betterGameState.community_cards.Count < 3 
+                && betterGameState.current_buy_in <= (ourPlayer.stack / 2))
             {
                 return Call(betterGameState, ourPlayer);
             }
