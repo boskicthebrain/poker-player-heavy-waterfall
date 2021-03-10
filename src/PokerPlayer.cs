@@ -21,13 +21,13 @@ namespace Nancy.Simple
             {
                 if (cardValue >= 1)
                 {
-                    return MinimumRaise(betterGameState, ourPlayer);
+                    return RaiseMinimum(betterGameState, ourPlayer);
                 }
 
                 if (cardValue > 0.73f // At least Jack
                     && betterGameState.current_buy_in <= betterGameState.small_blind * 2) 
                 {
-                    return MinimumRaise(betterGameState, ourPlayer);
+                    return RaiseMinimum(betterGameState, ourPlayer);
                 }
 
                 return Fold();
@@ -35,14 +35,19 @@ namespace Nancy.Simple
 
             if (betterGameState.community_cards.Count >= 3)
             {
+                if (cardValue >= 4)
+                {
+                    return Raise(betterGameState, ourPlayer, RaiseStep.AllIn);
+                }
+                
                 if (cardValue >= 3)
                 {
-                    return ourPlayer.stack;
+                    return Raise(betterGameState, ourPlayer, RaiseStep.HalfStack);
                 }
 
                 if (cardValue >= 2)
                 {
-                    return MinimumRaise(betterGameState, ourPlayer);
+                    return Raise(betterGameState, ourPlayer, RaiseStep.ThirdStack);
                 }
 
                 if (cardValue >= 1)
@@ -63,8 +68,23 @@ namespace Nancy.Simple
         {
             return betterGameState.current_buy_in - ourPlayer.bet > (ourPlayer.stack / 2);
         }
+        
+        private enum RaiseStep { Minimum, ThirdStack, HalfStack, AllIn}
 
-        private static int MinimumRaise(GameState betterGameState, Player ourPlayer)
+        private static int Raise(GameState state, Player we, RaiseStep step)
+        {
+            switch (step)
+            {
+                case RaiseStep.Minimum: return RaiseMinimum(state, we);
+                case RaiseStep.ThirdStack: return we.stack / 3;
+                case RaiseStep.HalfStack: return we.stack / 2;
+                case RaiseStep.AllIn: return we.stack;
+            }
+            
+            return RaiseMinimum(state, we);
+        }
+
+        private static int RaiseMinimum(GameState betterGameState, Player ourPlayer)
         {
             return betterGameState.current_buy_in - ourPlayer.bet + betterGameState.minimum_raise;
         }
