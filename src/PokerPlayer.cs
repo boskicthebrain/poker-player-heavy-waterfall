@@ -87,7 +87,7 @@ namespace Nancy.Simple
 
         private static bool IsBetTooHigh(GameState betterGameState, Player ourPlayer)
         {
-            return betterGameState.current_buy_in - ourPlayer.bet > (ourPlayer.stack / 2);
+            return betterGameState.current_buy_in - ourPlayer.bet > (ourPlayer.stack / 4);
         }
         
         private enum RaiseStep { Minimum, ThirdStack, HalfStack, AllIn}
