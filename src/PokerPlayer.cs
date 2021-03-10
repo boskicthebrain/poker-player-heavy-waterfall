@@ -20,7 +20,8 @@ namespace Nancy.Simple
                 var cardValue = handAnalyzer.Analyze(betterGameState.community_cards, ourPlayer.hole_cards);
 
 
-                if (betterGameState.community_cards.Count == 0)
+                Console.WriteLine("Community cards count: " + betterGameState.community_cards.Count);
+                if (betterGameState.community_cards.Count < 3)
                 {
                     var preflopStrategy = new PreflopStrategyAnalyzer();
                     var preflopRank = preflopStrategy.Analyze(ourPlayer.hole_cards);
